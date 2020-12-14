@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import s from '../ImageGallery/ImageGallery.module.css';
 
 class ImageGallery extends Component {
@@ -24,13 +25,7 @@ class ImageGallery extends Component {
         {this.state.images &&
           this.state.images.hits.map(image => (
             <li className={s.ImageGalleryItem} key={image.id}>
-              <a href={image.largeImageURL}>
-                <img
-                  src={image.webformatURL}
-                  alt={image.tag}
-                  className={s.ImageGalleryItemImage}
-                />
-              </a>
+              <ImageGalleryItem src={image.webformatURL} alt={image.tag} />
             </li>
           ))}
       </ul>
