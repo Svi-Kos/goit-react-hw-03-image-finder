@@ -3,13 +3,29 @@ import s from 'components/Searchbar/Searchbar.module.css';
 
 class Searchbar extends Component {
   state = {
-    images: null,
+    searchQuery: '',
+  };
+
+  handleSearchQuery = event => {
+    this.setState({ searchQuery: event.currentTarget.value.toLowerCase() });
+  };
+
+  handleSubmit = event => {
+    event.preventDefault();
+
+    if (this.state.searchQuery.trim() === '') {
+      return;
+    }
+
+    this.props.onSubmit(this.state.searchQuery);
+
+    this.setState({ searchQuery: '' });
   };
 
   render() {
     return (
       <header className={s.Searchbar}>
-        <form className={s.SearchForm}>
+        <form className={s.SearchForm} onSubmit={this.handleSubmit}>
           <button type="submit" className={s.SearchFormButton}>
             <span className={s.SearchFormButtonLabel}>Search</span>
           </button>
@@ -20,6 +36,8 @@ class Searchbar extends Component {
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
+            value={this.state.searchQuery}
+            onChange={this.handleSearchQuery}
           />
         </form>
       </header>

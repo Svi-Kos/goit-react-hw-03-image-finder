@@ -1,16 +1,21 @@
 import React, { Component } from 'react';
 import Searchbar from './components/Searchbar/Searchbar';
+import ImageGallery from './components/ImageGallery/ImageGallery';
 import './App.css';
 
 class App extends Component {
-  render() {
-    const url =
-      'https://pixabay.com/api/?q=sport&page=1&key=18966198-cc77d794ba7550ec695901208&image_type=photo&orientation=horizontal&per_page=12';
-    console.log(url);
+  state = {
+    searchQuery: '',
+  };
 
+  handleFormSubmit = searchQuery => {
+    this.setState({ searchQuery });
+  };
+  render() {
     return (
       <div>
-        <Searchbar />
+        <Searchbar onSubmit={this.handleFormSubmit} />
+        <ImageGallery searchQuery={this.state.searchQuery} />
       </div>
     );
   }
