@@ -8,22 +8,29 @@ import s from '../ImageGallery/ImageGallery.module.css';
 
 class ImageGallery extends Component {
   state = {
-    images: null,
+    images: [],
     error: null,
     status: 'idle',
     page: 1,
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.searchQuery !== this.props.searchQuery) {
+    if (
+      prevProps.searchQuery !== this.props.searchQuery ||
+      prevState.page !== this.state.page
+    ) {
       this.setState({ status: 'pending' });
       const errorMessage = 'Please enter more specific query';
 
       imageAPI
         .fetchImages(this.props.searchQuery, this.state.page)
-        .then(images => {
-          this.setState({ images: images.hits, status: 'resolved' });
-          if (images.length === 0) {
+        .then(newImages => {
+          this.setState({
+            images: [...prevState.images, ...newImages.hits],
+            status: 'resolved',
+          });
+          console.log(newImages);
+          if (newImages.length === 0) {
             alert(errorMessage);
           }
         })
@@ -32,19 +39,9 @@ class ImageGallery extends Component {
   }
 
   onLoadMore = () => {
-    imageAPI
-      .fetchImages(this.props.searchQuery, this.state.page)
-      .then(newImages => {
-        this.setState(({ images, page }) => ({
-          images: [...images, ...newImages.hits],
-          page: page + 1,
-        }));
-      });
-
-    // window.scrollTo({
-    //   top: document.documentElement.scrollHeight,
-    //   behavior: 'smooth',
-    // });
+    this.setState(({ page }) => ({
+      page: page + 1,
+    }));
   };
 
   render() {
