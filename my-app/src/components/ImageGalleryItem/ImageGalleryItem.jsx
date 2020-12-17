@@ -13,10 +13,11 @@ class ImageGalleryItem extends Component {
   };
 
   render() {
+    const { images } = this.props;
     return (
       <>
-        {this.props.images &&
-          this.props.images.hits.map(image => (
+        {images &&
+          images.map(image => (
             <li
               className={s.ImageGalleryItem}
               key={image.id}

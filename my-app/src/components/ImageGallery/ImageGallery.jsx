@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import imageAPI from '../../services/apiSevice';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import Button from '../Button/Button';
 import Loader from 'react-loader-spinner';
@@ -10,34 +11,41 @@ class ImageGallery extends Component {
     images: null,
     error: null,
     status: 'idle',
+    page: 1,
   };
-  // 'idle'
-  // 'pending'
-  // 'resolved'
-  // 'rejected'
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.searchQuery !== this.props.searchQuery) {
       this.setState({ status: 'pending' });
-      const url = `https://pixabay.com/api/?q=${this.props.searchQuery}&page=1&key=18966198-cc77d794ba7550ec695901208&image_type=photo&orientation=horizontal&per_page=12`;
       const errorMessage = 'Please enter more specific query';
 
-      fetch(url)
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          }
-          return Promise.reject(new Error(errorMessage));
-        })
+      imageAPI
+        .fetchImages(this.props.searchQuery, this.state.page)
         .then(images => {
-          this.setState({ images, status: 'resolved' });
-          if (images.hits.length === 0) {
+          this.setState({ images: images.hits, status: 'resolved' });
+          if (images.length === 0) {
             alert(errorMessage);
           }
         })
         .catch(error => this.setState({ error, status: 'rejected' }));
     }
   }
+
+  onLoadMore = () => {
+    imageAPI
+      .fetchImages(this.props.searchQuery, this.state.page)
+      .then(newImages => {
+        this.setState(({ images, page }) => ({
+          images: [...images, ...newImages.hits],
+          page: page + 1,
+        }));
+      });
+
+    // window.scrollTo({
+    //   top: document.documentElement.scrollHeight,
+    //   behavior: 'smooth',
+    // });
+  };
 
   render() {
     const { images, error, status } = this.state;
@@ -59,24 +67,22 @@ class ImageGallery extends Component {
     }
 
     if (status === 'rejected') {
-      return <h1>{error.message}</h1>;
+      return <p>{error.message}</p>;
     }
 
-    if (status === 'resolved') {
+    if (status === 'resolved' && images.length !== 0) {
       return (
         <>
           <ul className={s.ImageGallery}>
             <ImageGalleryItem images={images} />
           </ul>
-          <Button />
+          <Button onLoadMore={this.onLoadMore} />
         </>
       );
+    } else {
+      return <></>;
     }
   }
 }
-
-// кнопка лишається після помилки
-
-// пропси
 
 export default ImageGallery;
