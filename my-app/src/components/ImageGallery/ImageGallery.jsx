@@ -29,12 +29,25 @@ class ImageGallery extends Component {
             images: [...prevState.images, ...newImages.hits],
             status: 'resolved',
           });
-          console.log(newImages);
           if (newImages.length === 0) {
             alert(errorMessage);
           }
         })
         .catch(error => this.setState({ error, status: 'rejected' }));
+
+      let elemScrollTo = document.querySelector('#root ul');
+
+      if (elemScrollTo !== null) {
+        elemScrollTo = elemScrollTo.lastElementChild;
+
+        elemScrollTo.scrollIntoView({
+          behavior: 'smooth',
+        });
+        window.scrollBy({
+          top: -1,
+          behavior: 'smooth',
+        });
+      }
     }
   }
 
@@ -43,6 +56,10 @@ class ImageGallery extends Component {
       page: page + 1,
     }));
   };
+
+  resetPage() {
+    this.setState({ page: 1 });
+  }
 
   render() {
     const { images, error, status } = this.state;
