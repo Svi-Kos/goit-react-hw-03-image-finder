@@ -15,15 +15,14 @@ class ImageGallery extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (
-      prevProps.searchQuery !== this.props.searchQuery ||
-      prevState.page !== this.state.page
-    ) {
-      this.setState({ status: 'pending' });
-      const errorMessage = 'Please enter more specific query';
+    const selfSearchQuery = this.props.searchQuery;
+    const selfStatePage = this.state.page;
+    const errorMessage = 'Please enter more specific query';
+    let elemScrollTo = document.querySelector('#root ul');
 
+    const loadImagesByQuery = (selfSearchQuery, selfStatePage) => {
       imageAPI
-        .fetchImages(this.props.searchQuery, this.state.page)
+        .fetchImages(selfSearchQuery, selfStatePage)
         .then(newImages => {
           this.setState({
             images: [...prevState.images, ...newImages.hits],
@@ -34,8 +33,19 @@ class ImageGallery extends Component {
           }
         })
         .catch(error => this.setState({ error, status: 'rejected' }));
+    };
 
-      let elemScrollTo = document.querySelector('#root ul');
+    if (prevProps.searchQuery !== selfSearchQuery) {
+      prevState.images = [];
+      this.setState({ images: [], status: 'pending', page: 1 });
+
+      loadImagesByQuery(selfSearchQuery, selfStatePage);
+    }
+
+    if (prevState.page !== selfStatePage) {
+      this.setState({ status: 'pending' });
+
+      loadImagesByQuery(selfSearchQuery, selfStatePage);
 
       if (elemScrollTo !== null) {
         elemScrollTo = elemScrollTo.lastElementChild;
@@ -56,10 +66,6 @@ class ImageGallery extends Component {
       page: page + 1,
     }));
   };
-
-  resetPage() {
-    this.setState({ page: 1 });
-  }
 
   render() {
     const { images, error, status } = this.state;
