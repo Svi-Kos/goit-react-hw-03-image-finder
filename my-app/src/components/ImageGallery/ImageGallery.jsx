@@ -18,7 +18,7 @@ class ImageGallery extends Component {
     const selfSearchQuery = this.props.searchQuery;
     const selfStatePage = this.state.page;
     const errorMessage = 'Please enter more specific query';
-    // let elemScrollTo = document.querySelector('#root ul');
+    let elemScrollTo = document.querySelector('#root');
 
     const loadImagesByQuery = (selfSearchQuery, selfStatePage) => {
       imageAPI
@@ -43,14 +43,25 @@ class ImageGallery extends Component {
     }
 
     if (prevState.page !== selfStatePage) {
+      elemScrollTo.style.minHeight = 1232 + 'px';
+
       this.setState({ status: 'pending' });
 
       loadImagesByQuery(selfSearchQuery, selfStatePage);
+    }
 
+    if (
+      prevState.page < selfStatePage &&
+      prevProps.searchQuery === selfSearchQuery
+    ) {
       window.scrollTo({
         top: document.documentElement.scrollHeight,
         behavior: 'smooth',
       });
+    }
+
+    if (prevState.page > selfStatePage) {
+      elemScrollTo.style.minHeight = 0 + 'px';
     }
   }
 
