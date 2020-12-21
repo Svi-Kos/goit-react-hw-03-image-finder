@@ -18,7 +18,7 @@ class ImageGallery extends Component {
     const selfSearchQuery = this.props.searchQuery;
     const selfStatePage = this.state.page;
     const errorMessage = 'Please enter more specific query';
-    let elemScrollTo = document.querySelector('#root ul');
+    // let elemScrollTo = document.querySelector('#root ul');
 
     const loadImagesByQuery = (selfSearchQuery, selfStatePage) => {
       imageAPI
@@ -47,32 +47,22 @@ class ImageGallery extends Component {
 
       loadImagesByQuery(selfSearchQuery, selfStatePage);
 
-      if (elemScrollTo !== null) {
-        elemScrollTo = elemScrollTo.lastElementChild;
-
-        elemScrollTo.scrollIntoView({
-          behavior: 'smooth',
-        });
-        window.scrollBy({
-          top: -1,
-          behavior: 'smooth',
-        });
-      }
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth',
+      });
     }
   }
 
   onLoadMore = () => {
     this.setState(({ page }) => ({
       page: page + 1,
+      status: 'resolved',
     }));
   };
 
   render() {
     const { images, error, status } = this.state;
-
-    if (status === 'idle') {
-      return <></>;
-    }
 
     if (status === 'pending') {
       return (

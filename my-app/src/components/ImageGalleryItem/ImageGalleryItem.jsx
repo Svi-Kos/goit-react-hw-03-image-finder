@@ -5,8 +5,15 @@ import 'basiclightbox/dist/basicLightbox.min.css';
 
 class ImageGalleryItem extends Component {
   showLargeImage = event => {
+    let imgModalSrc;
+    for (let image of this.props.images) {
+      if (event.target.src === image.webformatURL) {
+        imgModalSrc = image.largeImageURL;
+      }
+    }
+
     const instance = basicLightbox.create(`
-      <img src="${event.target.alt}" alt="${event.target.alt}" width="800" height="600">
+      <img src="${imgModalSrc}" alt="${event.target.alt}" width="800" height="600">
   `);
 
     instance.show();
@@ -25,7 +32,7 @@ class ImageGalleryItem extends Component {
             >
               <img
                 src={image.webformatURL}
-                alt={image.largeImageURL}
+                alt={image.tags}
                 className={s.ImageGalleryItemImage}
               />
             </li>
