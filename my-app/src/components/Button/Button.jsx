@@ -1,4 +1,5 @@
 import s from '../Button/Button.module.css';
+import PropTypes from 'prop-types';
 
 const Button = props => (
   <div className={s.centered}>
@@ -7,5 +8,9 @@ const Button = props => (
     </button>
   </div>
 );
+
+Button.propTypes = {
+  onLoadMore: PropTypes.func.isRequired,
+};
 
 export default Button;

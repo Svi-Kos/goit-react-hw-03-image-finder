@@ -1,45 +1,34 @@
-import React, { Component } from 'react';
 import s from '../ImageGalleryItem/ImageGalleryItem.module.css';
+import PropTypes from 'prop-types';
 import * as basicLightbox from 'basiclightbox';
 import 'basiclightbox/dist/basicLightbox.min.css';
 
-class ImageGalleryItem extends Component {
-  showLargeImage = event => {
-    let imgModalSrc;
-    for (let image of this.props.images) {
-      if (event.target.src === image.webformatURL) {
-        imgModalSrc = image.largeImageURL;
-      }
-    }
-
+function ImageGalleryItem({ webformatURL, largeImageURL, tags }) {
+  function showLargeImage() {
     const instance = basicLightbox.create(`
-      <img src="${imgModalSrc}" alt="${event.target.alt}" width="800" height="600">
-  `);
+        <img src="${largeImageURL}" alt="${tags}" width="800" height="600">
+    `);
 
     instance.show();
-  };
-
-  render() {
-    const { images } = this.props;
-    return (
-      <>
-        {images &&
-          images.map(image => (
-            <li
-              className={s.ImageGalleryItem}
-              key={image.id}
-              onClick={this.showLargeImage}
-            >
-              <img
-                src={image.webformatURL}
-                alt={image.tags}
-                className={s.ImageGalleryItemImage}
-              />
-            </li>
-          ))}
-      </>
-    );
   }
+
+  return (
+    <li className={s.ImageGalleryItem}>
+      <img
+        src={webformatURL}
+        alt={tags}
+        data-source={largeImageURL}
+        className={s.ImageGalleryItemImage}
+        onClick={showLargeImage}
+      />
+    </li>
+  );
 }
+
+ImageGalleryItem.propTypes = {
+  webformatURL: PropTypes.string.isRequired,
+  largeImageURL: PropTypes.string.isRequired,
+  tags: PropTypes.string.isRequired,
+};
 
 export default ImageGalleryItem;

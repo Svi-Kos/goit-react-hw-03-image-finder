@@ -5,6 +5,7 @@ import Button from '../Button/Button';
 import Loader from 'react-loader-spinner';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import s from '../ImageGallery/ImageGallery.module.css';
+import PropTypes from 'prop-types';
 
 class ImageGallery extends Component {
   state = {
@@ -18,7 +19,6 @@ class ImageGallery extends Component {
     const selfSearchQuery = this.props.searchQuery;
     const selfStatePage = this.state.page;
     const errorMessage = 'Please enter more specific query';
-    let elemScrollTo = document.querySelector('#root');
 
     const loadImagesByQuery = (selfSearchQuery, selfStatePage) => {
       imageAPI
@@ -28,6 +28,14 @@ class ImageGallery extends Component {
             images: [...prevState.images, ...newImages.hits],
             status: 'resolved',
           });
+
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+          });
+          window.scrollBy({
+            top: -600,
+          });
+
           if (newImages.length === 0) {
             alert(errorMessage);
           }
@@ -43,25 +51,9 @@ class ImageGallery extends Component {
     }
 
     if (prevState.page !== selfStatePage) {
-      elemScrollTo.style.minHeight = 1232 + 'px';
-
       this.setState({ status: 'pending' });
 
       loadImagesByQuery(selfSearchQuery, selfStatePage);
-    }
-
-    if (
-      prevState.page < selfStatePage &&
-      prevProps.searchQuery === selfSearchQuery
-    ) {
-      window.scrollTo({
-        top: document.documentElement.scrollHeight,
-        behavior: 'smooth',
-      });
-    }
-
-    if (prevState.page > selfStatePage) {
-      elemScrollTo.style.minHeight = 0 + 'px';
     }
   }
 
@@ -95,15 +87,25 @@ class ImageGallery extends Component {
       return (
         <>
           <ul className={s.ImageGallery}>
-            <ImageGalleryItem images={images} />
+            {images.map(({ id, webformatURL, largeImageURL, tags }) => (
+              <ImageGalleryItem
+                key={id}
+                webformatURL={webformatURL}
+                largeImageURL={largeImageURL}
+                tags={tags}
+              />
+            ))}
           </ul>
           <Button onLoadMore={this.onLoadMore} />
         </>
       );
-    } else {
-      return <></>;
     }
+    return null;
   }
 }
+
+ImageGallery.propTypes = {
+  searchQuery: PropTypes.string.isRequired,
+};
 
 export default ImageGallery;
