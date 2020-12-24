@@ -28,17 +28,17 @@ class ImageGallery extends Component {
             images: [...prevState.images, ...newImages.hits],
             status: 'resolved',
           });
-
+          if (newImages.length === 0) {
+            alert(errorMessage);
+          }
+        })
+        .then(() => {
           window.scrollTo({
             top: document.documentElement.scrollHeight,
           });
           window.scrollBy({
             top: -600,
           });
-
-          if (newImages.length === 0) {
-            alert(errorMessage);
-          }
         })
         .catch(error => this.setState({ error, status: 'rejected' }));
     };
@@ -51,7 +51,7 @@ class ImageGallery extends Component {
     }
 
     if (prevState.page !== selfStatePage) {
-      this.setState({ status: 'pending' });
+      // this.setState({ status: 'pending' });
 
       loadImagesByQuery(selfSearchQuery, selfStatePage);
     }
@@ -66,41 +66,35 @@ class ImageGallery extends Component {
 
   render() {
     const { images, error, status } = this.state;
-
-    if (status === 'pending') {
-      return (
-        <Loader
-          type="ThreeDots"
-          color="#303f9f"
-          height={80}
-          width={80}
-          style={{ textAlign: 'center' }}
-        />
-      );
-    }
-
-    if (status === 'rejected') {
-      return <p>{error.message}</p>;
-    }
-
-    if (status === 'resolved' && images.length !== 0) {
-      return (
-        <>
-          <ul className={s.ImageGallery}>
-            {images.map(({ id, webformatURL, largeImageURL, tags }) => (
-              <ImageGalleryItem
-                key={id}
-                webformatURL={webformatURL}
-                largeImageURL={largeImageURL}
-                tags={tags}
-              />
-            ))}
-          </ul>
-          <Button onLoadMore={this.onLoadMore} />
-        </>
-      );
-    }
-    return null;
+    return (
+      <>
+        {status === 'pending' && (
+          <Loader
+            type="ThreeDots"
+            color="#303f9f"
+            height={80}
+            width={80}
+            style={{ textAlign: 'center' }}
+          />
+        )}{' '}
+        {status === 'rejected' && <p>{error.message}</p>}{' '}
+        {status === 'resolved' && (
+          <>
+            <ul className={s.ImageGallery}>
+              {images.map(({ id, webformatURL, largeImageURL, tags }) => (
+                <ImageGalleryItem
+                  key={id}
+                  webformatURL={webformatURL}
+                  largeImageURL={largeImageURL}
+                  tags={tags}
+                />
+              ))}
+            </ul>
+            <Button onLoadMore={this.onLoadMore} />
+          </>
+        )}
+      </>
+    );
   }
 }
 

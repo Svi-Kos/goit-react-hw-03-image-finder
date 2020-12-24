@@ -17,7 +17,6 @@ function ImageGalleryItem({ webformatURL, largeImageURL, tags }) {
       <img
         src={webformatURL}
         alt={tags}
-        data-source={largeImageURL}
         className={s.ImageGalleryItemImage}
         onClick={showLargeImage}
       />
