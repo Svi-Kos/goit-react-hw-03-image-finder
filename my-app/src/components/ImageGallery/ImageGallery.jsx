@@ -32,16 +32,15 @@ class ImageGallery extends Component {
             alert(errorMessage);
           }
         })
-        .then(() => {
-          window.scrollTo({
-            top: document.documentElement.scrollHeight,
-          });
-          window.scrollBy({
-            top: -600,
-          });
-        })
         .catch(error => this.setState({ error, status: 'rejected' }));
     };
+
+    if (selfStatePage > 1) {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
 
     if (prevProps.searchQuery !== selfSearchQuery) {
       prevState.images = [];
